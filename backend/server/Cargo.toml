@@ -1,0 +1,13 @@
+[package]
+name = "verband-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+axum.workspace = true
+async-graphql.workspace = true
+async-graphql-axum.workspace = true
+tokio.workspace = true
+
+verband-graphql.path = "../graphql"

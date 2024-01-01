@@ -1,0 +1,27 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/backend
+    ports:
+      - 8000:8000
+
+  db:
+    image: postgres:16.1-bookworm
+    environment:
+      POSTGRES_PASSWORD: postgres-password
+    volumes:
+      - db:/var/lib/postgresql/data
+  
+  meilisearch:
+    image: getmeili/meilisearch:v1.5
+    environment:
+      MEILI_MASTER_KEY: meili-master-key
+    volumes:
+      - meilisearch:/meili_data
+
+volumes:
+  db:
+  meilisearch:

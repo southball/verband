@@ -1,0 +1,26 @@
+FROM rust:1.75
+
+# Install clang for mold
+RUN apt-get update && apt-get install -y clang
+
+# Install mold
+RUN git clone https://github.com/rui314/mold.git /mold \
+  && mkdir /mold/build \
+  && cd /mold/build \
+  && git checkout v1.7.1 \
+  && ../install-build-deps.sh \
+  && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/c++ .. \
+  && cmake --build . -j $(nproc) \
+  && cmake --install .
+
+# Set up Rust to use mold
+RUN mkdir /.cargo \
+  && echo '[target.x86_64-unknown-linux-gnu]' >> /.cargo/config.toml \
+  && echo 'linker = "clang"' >> /.cargo/config.toml \
+  && echo 'rustflags = ["-C", "link-arg=-fuse-ld=/usr/local/bin/mold"]' >> /.cargo/config.toml
+
+# Install cargo-watch
+RUN cargo install cargo-watch
+
+WORKDIR /backend
+ENTRYPOINT ["cargo", "watch", "-x", "run"]
