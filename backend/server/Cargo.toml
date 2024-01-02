@@ -9,5 +9,7 @@ axum.workspace = true
 async-graphql.workspace = true
 async-graphql-axum.workspace = true
 tokio.workspace = true
+tower.workspace = true
+tower-sessions.workspace = true
 
 verband-graphql.path = "../graphql"

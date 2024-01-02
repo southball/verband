@@ -11,3 +11,6 @@ axum = "0.6"
 async-graphql = "6.0"
 async-graphql-axum = "6.0"
 tokio = { version = "1.35", features = ["full"] }
+tower = "0.4"
+tower-sessions = { version = "0.6", features = ["postgres-store"] }
+sqlx = "0.7"
