@@ -25,6 +25,7 @@ CREATE TABLE blocks (
 CREATE TABLE block_versions (
     id BIGSERIAL PRIMARY KEY,
     block_id BIGINT NOT NULL REFERENCES blocks (id),
+    parent_block_version_id BIGINT REFERENCES block_versions (id),
     content_type TEXT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
