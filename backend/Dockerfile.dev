@@ -22,5 +22,8 @@ RUN mkdir /.cargo \
 # Install cargo-watch
 RUN cargo install cargo-watch
 
+# Install sqlx-cli
+RUN cargo install sqlx-cli
+
 WORKDIR /backend
 ENTRYPOINT ["cargo", "watch", "-x", "run"]
