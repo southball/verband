@@ -1,4 +1,16 @@
 services:
+  frontend:
+    image: node:20
+    working_dir: /frontend
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - 3000:3000
+    entrypoint:
+      - bash
+      - -c
+      - "npm ci && npm run dev"
+
   backend:
     build:
       context: ./backend
