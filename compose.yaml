@@ -3,6 +3,7 @@ services:
     image: node:20
     working_dir: /frontend
     volumes:
+      - frontend_node_modules:/frontend/node_modules/
       - ./frontend:/frontend
     ports:
       - 3000:3000
@@ -18,6 +19,7 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres-password@db:5432/verband
     volumes:
+      - backend_target:/backend/target/
       - ./backend:/backend
     ports:
       - 8000:8000
@@ -40,3 +42,5 @@ services:
 volumes:
   db:
   meilisearch:
+  frontend_node_modules:
+  backend_target:
