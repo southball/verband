@@ -1,1 +1,5 @@
-pub mod user;
+mod post;
+pub use post::*;
+
+mod user;
+pub use user::*;

@@ -1,4 +1,4 @@
-use crate::{model::user::User, scalar::UserId};
+use crate::{model::User, scalar::UserId};
 use async_graphql::{Context, Object};
 use sqlx::PgPool;
 use tower_sessions::Session;

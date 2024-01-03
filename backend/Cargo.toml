@@ -8,6 +8,7 @@ anyhow = "1.0"
 axum = "0.6"
 async-graphql = "6.0"
 async-graphql-axum = "6.0"
+async-trait = "0.1"
 chrono = "0.4"
 derive_more = "0.99"
 tokio = { version = "1.35", features = ["full"] }

@@ -4,7 +4,7 @@ use sqlx::PgConnection;
 
 use crate::scalar::UserId;
 
-#[derive(SimpleObject)]
+#[derive(Clone, SimpleObject)]
 pub struct User {
     pub(crate) id: UserId,
     pub(crate) handle_name: String,
@@ -72,7 +72,7 @@ impl User {
         Ok(sqlx::query_as!(
             User,
             "UPDATE users
-            SET handle_name = $2, display_name = $3, password_hash = $4
+            SET handle_name = $2, display_name = $3, password_hash = $4, updated_at = CURRENT_TIMESTAMP
             WHERE id = $1
             RETURNING id, handle_name, display_name, password_hash, created_at, updated_at",
             id.0,

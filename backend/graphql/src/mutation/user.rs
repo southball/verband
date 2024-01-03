@@ -7,7 +7,7 @@ use sqlx::PgPool;
 use tower_sessions::Session;
 
 use crate::{
-    model::user::{User, UserCreateData, UserUpdateData, UserUpdateInput},
+    model::{User, UserCreateData, UserUpdateData, UserUpdateInput},
     scalar::UserId,
 };
 
