@@ -1,6 +1,6 @@
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    handle_name TEXT NOT NULL,
+    handle_name TEXT UNIQUE NOT NULL,
     display_name TEXT NOT NULL,
     password_hash TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

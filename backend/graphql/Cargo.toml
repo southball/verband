@@ -4,5 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-async-graphql.workspace = true
+anyhow.workspace = true
+argon2.workspace = true
+async-graphql = { workspace = true, features = ["chrono"] }
+chrono.workspace = true
+derive_more.workspace = true
 tower-sessions.workspace = true
+sqlx.workspace = true
+sqlx-macros.workspace = true
+serde.workspace = true

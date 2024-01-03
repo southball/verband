@@ -10,8 +10,9 @@ use axum::{
 use std::net::SocketAddr;
 use tower::ServiceBuilder;
 use tower_sessions::{
-    cookie::time::Duration, sqlx::postgres::PgPoolOptions, Expiry, PostgresStore, Session,
-    SessionManagerLayer,
+    cookie::time::Duration,
+    sqlx::{postgres::PgPoolOptions, PgPool},
+    Expiry, PostgresStore, Session, SessionManagerLayer,
 };
 use verband_graphql::{verband_schema, VerbandSchema};
 
@@ -21,10 +22,12 @@ async fn graphiql() -> impl IntoResponse {
 
 async fn graphql_handler(
     Extension(schema): Extension<VerbandSchema>,
+    Extension(pool): Extension<PgPool>,
     session: Session,
     req: GraphQLRequest,
 ) -> GraphQLResponse {
-    schema.execute(req.into_inner().data(session)).await.into()
+    let req = req.into_inner().data(session).data(pool);
+    schema.execute(req).await.into()
 }
 
 #[tokio::main]
@@ -51,6 +54,7 @@ async fn main() -> anyhow::Result<()> {
     let app = Router::new()
         .route("/api/graphql", get(graphiql).post(graphql_handler))
         .layer(Extension(schema))
+        .layer(Extension(pool))
         .layer(session_layer);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
