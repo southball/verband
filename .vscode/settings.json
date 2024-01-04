@@ -1,5 +1,8 @@
 {
     "rust-analyzer.linkedProjects": [
         "./backend/Cargo.toml"
-    ]
+    ],
+    "rust-analyzer.check.extraEnv": {
+        "DATABASE_URL": "postgres://postgres:postgres-password@localhost:5432/verband"
+    }
 }

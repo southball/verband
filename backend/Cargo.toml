@@ -1,5 +1,5 @@
 [workspace]
-members = ["server", "graphql"]
+members = ["server", "graphql", "tools"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -8,12 +8,17 @@ anyhow = "1.0"
 axum = "0.6"
 async-graphql = "6.0"
 async-graphql-axum = "6.0"
+async-stream = "0.3"
 async-trait = "0.1"
 chrono = "0.4"
 derive_more = "0.99"
+futures = "0.3"
+itertools = "0.12"
 tokio = { version = "1.35", features = ["full"] }
+tokio-stream = "0.1"
 tower = "0.4"
 tower-sessions = { version = "0.6", features = ["postgres-store"] }
-sqlx = { version = "0.7", features = ["chrono"] }
+sqlx = { version = "0.7", features = ["postgres", "chrono"] }
 sqlx-macros = "0.7"
 serde = { version = "1.0", features = ["derive"] }
+secrecy = "0.8"

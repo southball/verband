@@ -1,0 +1,109 @@
+type Block {
+	id: BlockId!
+	postId: PostId!
+	latestBlockVersionId: BlockVersionId!
+	createdAt: DateTime!
+	updatedAt: DateTime!
+	allBlockVersions: [BlockVersion!]!
+	latestBlockVersion: BlockVersion!
+}
+
+scalar BlockId
+
+type BlockVersion {
+	id: BlockVersionId!
+	blockId: BlockId!
+	parentBlockVersionId: BlockVersionId
+	creatorId: UserId!
+	contentType: String!
+	content: String!
+	createdAt: DateTime!
+	creator: User!
+}
+
+scalar BlockVersionId
+
+
+"""
+Implement the DateTime<Utc> scalar
+
+The input/output is a string in RFC3339 format.
+"""
+scalar DateTime
+
+
+
+
+type MutationRoot {
+	userLogin(handleName: String!, password: String!): User!
+	userRegister(handleName: String!, displayName: String!, password: String!): Boolean!
+	userUpdate(input: UserUpdateInput!): User!
+	userLogout: Boolean!
+	postCreate(input: PostCreateInput!): Post!
+	postUpdate(id: PostId!, input: PostUpdateInput!): Post!
+	blockCreate(input: Boolean!): Block!
+	blockUpdate(id: BlockId!, input: Boolean!): Block!
+	tagCreate(input: Boolean!): Tag!
+	tagUpdate(input: Boolean!): Tag!
+}
+
+type Post {
+	id: PostId!
+	creatorId: UserId!
+	title: String!
+	createdAt: DateTime!
+	updatedAt: DateTime!
+	blocks: [Block!]!
+	tags: [Tag!]!
+	creator: User!
+}
+
+input PostCreateInput {
+	title: String!
+	tagIds: [TagId!]!
+}
+
+scalar PostId
+
+input PostUpdateInput {
+	title: String!
+	tagIds: [TagId!]!
+}
+
+type QueryRoot {
+	userMe: User
+	postsByTags(tagIds: [TagId!]!): [Post!]!
+	blocksByIds(ids: [BlockId!]!): [Block!]!
+	tagsAll: [Tag!]!
+}
+
+
+type Tag {
+	id: TagId!
+	name: String!
+}
+
+scalar TagId
+
+type User {
+	id: UserId!
+	handleName: String!
+	displayName: String!
+	createdAt: DateTime!
+	updatedAt: DateTime!
+	posts: [Post!]!
+}
+
+scalar UserId
+
+input UserUpdateInput {
+	handleName: String
+	displayName: String
+	password: String
+}
+
+schema {
+	query: QueryRoot
+	mutation: MutationRoot
+}
+

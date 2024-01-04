@@ -3,6 +3,7 @@ use argon2::{
     Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
 use async_graphql::{Context, Object};
+use secrecy::{ExposeSecret, Secret};
 use sqlx::PgPool;
 use tower_sessions::Session;
 
@@ -20,7 +21,7 @@ impl UserMutation {
         &self,
         ctx: &Context<'_>,
         handle_name: String,
-        password: String,
+        password: Secret<String>,
     ) -> async_graphql::Result<User> {
         let pool = ctx.data::<PgPool>()?;
         let mut conn = pool.acquire().await?;
@@ -33,7 +34,7 @@ impl UserMutation {
         let password_hash = PasswordHash::new(&user.password_hash)?;
 
         if !Argon2::default()
-            .verify_password(password.as_bytes(), &password_hash)
+            .verify_password(password.expose_secret().as_bytes(), &password_hash)
             .is_ok()
         {
             return Err(async_graphql::Error::new("Password is not correct."));
@@ -49,14 +50,14 @@ impl UserMutation {
         ctx: &Context<'_>,
         #[graphql(validator(min_length = 3))] handle_name: String,
         #[graphql(validator(min_length = 1))] display_name: String,
-        #[graphql(validator(min_length = 8))] password: String,
+        #[graphql(validator(min_length = 8))] password: Secret<String>,
     ) -> async_graphql::Result<bool> {
         let pool = ctx.data::<PgPool>()?;
         let mut tx = pool.begin().await?;
 
         let salt = SaltString::generate(&mut OsRng);
         let password_hash = Argon2::default()
-            .hash_password(password.as_bytes(), &salt)?
+            .hash_password(password.expose_secret().as_bytes(), &salt)?
             .to_string();
 
         if User::find_by_handle_name(&mut tx, &handle_name)
@@ -98,10 +99,22 @@ impl UserMutation {
             return Err(async_graphql::Error::new("User not found."));
         };
 
+        let password_hash = match input.password {
+            Some(password) => {
+                let salt = SaltString::generate(&mut OsRng);
+                Some(
+                    Argon2::default()
+                        .hash_password(password.expose_secret().as_bytes(), &salt)?
+                        .to_string(),
+                )
+            }
+            None => None,
+        };
+
         let user_update_data = UserUpdateData {
             handle_name: input.handle_name.unwrap_or(user.handle_name),
             display_name: input.display_name.unwrap_or(user.display_name),
-            password_hash: input.password_hash.unwrap_or(user.password_hash),
+            password_hash: password_hash.unwrap_or(user.password_hash),
         };
 
         let user = User::update(&mut tx, UserId(user_id), &user_update_data).await?;

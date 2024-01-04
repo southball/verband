@@ -6,11 +6,21 @@ edition = "2021"
 [dependencies]
 anyhow.workspace = true
 argon2.workspace = true
-async-graphql = { workspace = true, features = ["chrono", "dataloader"] }
+async-graphql = { workspace = true, features = [
+    "chrono",
+    "dataloader",
+    "secrecy",
+] }
+async-stream.workspace = true
 async-trait.workspace = true
 chrono.workspace = true
 derive_more.workspace = true
+futures.workspace = true
+itertools.workspace = true
 tower-sessions.workspace = true
-sqlx.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+sqlx = { workspace = true, features = ["postgres"] }
 sqlx-macros.workspace = true
 serde.workspace = true
+secrecy.workspace = true

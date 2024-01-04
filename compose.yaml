@@ -24,11 +24,20 @@ services:
     ports:
       - 8000:8000
 
+  nginx:
+    image: nginx:1.25.3
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/nginx.conf
+    ports:
+      - 8080:8080
+
   db:
     image: postgres:16.1-bookworm
     environment:
       POSTGRES_PASSWORD: postgres-password
       POSTGRES_DB: verband
+    ports:
+      - 5432:5432
     volumes:
       - db:/var/lib/postgresql/data
   

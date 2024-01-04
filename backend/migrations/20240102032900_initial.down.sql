@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS post_tags;
+DROP TABLE IF EXISTS tags;
+ALTER TABLE blocks DROP COLUMN latest_block_version_id;
 DROP TABLE IF EXISTS block_versions;
 DROP TABLE IF EXISTS blocks;
 DROP TABLE IF EXISTS posts;

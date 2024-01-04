@@ -1,10 +1,17 @@
-use async_graphql::{InputObject, SimpleObject};
+use async_graphql::{dataloader::DataLoader, ComplexObject, Context, InputObject, SimpleObject};
 use chrono::{DateTime, Utc};
+use secrecy::Secret;
 use sqlx::PgConnection;
 
-use crate::scalar::UserId;
+use crate::{
+    scalar::{PostsByCreatorId, UserId},
+    VerbandLoader,
+};
+
+use super::Post;
 
 #[derive(Clone, SimpleObject)]
+#[graphql(complex)]
 pub struct User {
     pub(crate) id: UserId,
     pub(crate) handle_name: String,
@@ -25,7 +32,7 @@ pub struct UserCreateData {
 pub struct UserUpdateInput {
     pub(crate) handle_name: Option<String>,
     pub(crate) display_name: Option<String>,
-    pub(crate) password_hash: Option<String>,
+    pub(crate) password: Option<Secret<String>>,
 }
 
 pub struct UserUpdateData {
@@ -45,10 +52,9 @@ impl User {
     }
 
     pub async fn find_by_ids(conn: &mut PgConnection, ids: &[UserId]) -> anyhow::Result<Vec<User>> {
-        let ids = ids.into_iter().map(|id| id.0).collect::<Vec<_>>();
-        Ok(sqlx::query_as!(User, "SELECT id, handle_name, display_name, password_hash, created_at, updated_at FROM users WHERE id = ANY($1)", &ids)
-        .fetch_all(&mut *conn)
-        .await?)
+        Ok(sqlx::query_as!(User, "SELECT id, handle_name, display_name, password_hash, created_at, updated_at FROM users WHERE id = ANY($1)", ids as &[UserId])
+            .fetch_all(&mut *conn)
+            .await?)
     }
 
     pub async fn create(conn: &mut PgConnection, data: &UserCreateData) -> anyhow::Result<User> {
@@ -82,5 +88,19 @@ impl User {
         )
         .fetch_one(&mut *conn)
         .await?)
+    }
+}
+
+#[ComplexObject]
+impl User {
+    async fn posts(&self, ctx: &Context<'_>) -> async_graphql::Result<Vec<Post>> {
+        let dataloader = ctx.data::<DataLoader<VerbandLoader>>()?;
+
+        let posts = dataloader
+            .load_one(PostsByCreatorId(self.id))
+            .await?
+            .ok_or_else(|| async_graphql::Error::new("Error while fetching posts for user."))?;
+
+        Ok(posts)
     }
 }
