@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, InputObject, SimpleObject};
 use chrono::{DateTime, Utc};
 use itertools::Itertools;
+use serde::{Deserialize, Serialize};
 use sqlx::PgConnection;
 
 use crate::{
@@ -12,7 +13,7 @@ use crate::{
 
 use super::{Block, Tag, User};
 
-#[derive(Clone, SimpleObject)]
+#[derive(Clone, Serialize, Deserialize, SimpleObject)]
 #[graphql(complex)]
 pub struct Post {
     pub(crate) id: PostId,
@@ -46,6 +47,13 @@ pub struct PostUpdateData {
 }
 
 impl Post {
+    pub fn generate_searchable_object(post: &Post) -> serde_json::Value {
+        serde_json::json!({
+            "id": post.id,
+            "title": post.title
+        })
+    }
+
     pub async fn find_all(conn: &mut PgConnection) -> anyhow::Result<Vec<Post>> {
         Ok(sqlx::query_as!(
             Post,

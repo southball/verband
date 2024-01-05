@@ -17,7 +17,7 @@ pub struct BlockVersion {
     parent_block_version_id: Option<BlockVersionId>,
     creator_id: UserId,
     content_type: String,
-    content: String,
+    pub(crate) content: String,
     created_at: DateTime<Utc>,
 }
 

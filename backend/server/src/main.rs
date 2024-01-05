@@ -33,12 +33,14 @@ async fn graphql_handler(
     Extension(schema): Extension<VerbandSchema>,
     Extension(pool): Extension<PgPool>,
     Extension(sender): Extension<VerbandEventSender>,
+    Extension(meilisearch): Extension<meilisearch_sdk::Client>,
     session: Session,
     req: GraphQLRequest,
 ) -> GraphQLResponse {
     let req = req
         .into_inner()
         .data(session)
+        .data(meilisearch)
         .data(pool.clone())
         .data(DataLoader::new(VerbandLoader(pool), tokio::spawn))
         .data(sender);
@@ -49,6 +51,7 @@ async fn graphql_ws_handler<T>(
     Extension(schema): Extension<VerbandSchema>,
     Extension(pool): Extension<PgPool>,
     Extension(sender): Extension<VerbandEventSender>,
+    Extension(meilisearch): Extension<meilisearch_sdk::Client>,
     session: Session,
     req: Request<T>,
 ) -> Result<axum::response::Response<BoxBody>, Infallible> {
@@ -66,6 +69,7 @@ async fn graphql_ws_handler<T>(
 
     let mut data = async_graphql::Data::default();
     data.insert(session);
+    data.insert(meilisearch);
     data.insert(pool.clone());
     data.insert(DataLoader::new(VerbandLoader(pool), tokio::spawn));
     data.insert(sender);
@@ -102,6 +106,20 @@ async fn main() -> anyhow::Result<()> {
     let schema = verband_schema();
     let (sender, mut receiver) = verband_event_bus();
 
+    let meilisearch = meilisearch_sdk::Client::new(
+        std::env::var("MEILISEARCH_URL")?,
+        Some(std::env::var("MEILISEARCH_KEY")?),
+    );
+
+    meilisearch
+        .index("posts")
+        .set_searchable_attributes(vec!["title"])
+        .await?;
+    meilisearch
+        .index("blocks")
+        .set_searchable_attributes(vec!["content"])
+        .await?;
+
     // We need to spawn a task to consume all events so that the channel would neither overflow nor close.
     tokio::spawn(async move {
         loop {
@@ -116,6 +134,7 @@ async fn main() -> anyhow::Result<()> {
             get(graphql_ws_handler).post(graphql_ws_handler),
         )
         .layer(Extension(schema))
+        .layer(Extension(meilisearch))
         .layer(Extension(pool))
         .layer(Extension(sender))
         .layer(session_layer);

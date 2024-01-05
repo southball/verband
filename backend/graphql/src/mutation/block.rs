@@ -23,6 +23,7 @@ impl BlockMutation {
         let pool = ctx.data::<PgPool>()?;
         let session = ctx.data::<Session>()?;
         let sender = ctx.data::<VerbandEventSender>()?;
+        let meilisearch = ctx.data::<meilisearch_sdk::Client>()?;
 
         let Some(user_id) = session.get::<i64>("user_id")? else {
             return Err(async_graphql::Error::new("Not logged in."));
@@ -45,6 +46,14 @@ impl BlockMutation {
 
         tx.commit().await?;
 
+        meilisearch
+            .index("blocks")
+            .add_documents(
+                &[Block::generate_searchable_object(&block, &block_version)],
+                Some("id"),
+            )
+            .await?;
+
         sender.send(VerbandEvent::PostBlockCreated(PostBlockCreatedEvent {
             post_id: block.post_id,
             block_id: block.id,
@@ -63,6 +72,7 @@ impl BlockMutation {
         let pool = ctx.data::<PgPool>()?;
         let session = ctx.data::<Session>()?;
         let sender = ctx.data::<VerbandEventSender>()?;
+        let meilisearch = ctx.data::<meilisearch_sdk::Client>()?;
 
         let Some(user_id) = session.get::<i64>("user_id")? else {
             return Err(async_graphql::Error::new("Not logged in."));
@@ -83,6 +93,14 @@ impl BlockMutation {
         let block = Block::update(&mut tx, block_id, block_version.id).await?;
 
         tx.commit().await?;
+
+        meilisearch
+            .index("blocks")
+            .add_documents(
+                &[Block::generate_searchable_object(&block, &block_version)],
+                Some("id"),
+            )
+            .await?;
 
         sender.send(VerbandEvent::PostBlockUpdated(PostBlockUpdatedEvent {
             post_id: block.post_id,

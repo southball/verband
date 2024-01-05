@@ -8,6 +8,7 @@ anyhow.workspace = true
 async-graphql-axum.workspace = true
 async-graphql.workspace = true
 axum.workspace = true
+meilisearch-sdk.workspace = true
 tokio.workspace = true
 tower-sessions.workspace = true
 tower.workspace = true

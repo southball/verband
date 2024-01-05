@@ -24,6 +24,7 @@ impl PostMutation {
         let pool = ctx.data::<PgPool>()?;
         let sender = ctx.data::<VerbandEventSender>()?;
         let session = ctx.data::<Session>()?;
+        let meilisearch = ctx.data::<meilisearch_sdk::Client>()?;
 
         let Some(user_id) = session.get::<i64>("user_id")? else {
             return Err(async_graphql::Error::new("Not logged in."));
@@ -43,6 +44,11 @@ impl PostMutation {
 
         tx.commit().await?;
 
+        meilisearch
+            .index("posts")
+            .add_documents(&[Post::generate_searchable_object(&post)], Some("id"))
+            .await?;
+
         sender.send(VerbandEvent::PostCreated(PostCreatedEvent {
             post_id: post.id,
         }))?;
@@ -59,6 +65,7 @@ impl PostMutation {
     ) -> async_graphql::Result<Post> {
         let pool = ctx.data::<PgPool>()?;
         let sender = ctx.data::<VerbandEventSender>()?;
+        let meilisearch = ctx.data::<meilisearch_sdk::Client>()?;
 
         let mut tx = pool.begin().await?;
         let post = Post::update(
@@ -71,6 +78,11 @@ impl PostMutation {
         )
         .await?;
         tx.commit().await?;
+
+        meilisearch
+            .index("posts")
+            .add_documents(&[Post::generate_searchable_object(&post)], Some("id"))
+            .await?;
 
         sender.send(VerbandEvent::PostUpdated(PostUpdatedEvent {
             post_id: post.id,

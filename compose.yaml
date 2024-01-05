@@ -18,6 +18,8 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       DATABASE_URL: postgres://postgres:postgres-password@db:5432/verband
+      MEILISEARCH_URL: http://meilisearch:7700
+      MEILISEARCH_KEY: meili-master-key
     volumes:
       - backend_target:/backend/target/
       - ./backend:/backend
@@ -45,6 +47,8 @@ services:
     image: getmeili/meilisearch:v1.5
     environment:
       MEILI_MASTER_KEY: meili-master-key
+    ports:
+      - 7700:7700
     volumes:
       - meilisearch:/meili_data
 

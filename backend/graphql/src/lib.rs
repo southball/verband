@@ -9,9 +9,9 @@ mod subscription;
 
 use mutation::MutationRoot;
 use query::QueryRoot;
+use subscription::SubscriptionRoot;
 
 pub use dataloader::VerbandLoader;
-use subscription::SubscriptionRoot;
 pub type VerbandSchema = async_graphql::Schema<QueryRoot, MutationRoot, SubscriptionRoot>;
 pub type VerbandEventSender = tokio::sync::broadcast::Sender<VerbandEvent>;
 

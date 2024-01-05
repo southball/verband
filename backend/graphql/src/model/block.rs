@@ -1,5 +1,6 @@
 use async_graphql::{dataloader::DataLoader, ComplexObject, Context, SimpleObject};
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use sqlx::PgConnection;
 
 use crate::{
@@ -9,7 +10,7 @@ use crate::{
 
 use super::BlockVersion;
 
-#[derive(Clone, SimpleObject)]
+#[derive(Clone, Serialize, Deserialize, SimpleObject)]
 #[graphql(complex)]
 pub struct Block {
     pub(crate) id: BlockId,
@@ -20,6 +21,16 @@ pub struct Block {
 }
 
 impl Block {
+    pub fn generate_searchable_object(
+        block: &Block,
+        block_version: &BlockVersion,
+    ) -> serde_json::Value {
+        serde_json::json!({
+            "id": block.id,
+            "content": block_version.content
+        })
+    }
+
     pub async fn find_by_ids(
         conn: &mut PgConnection,
         ids: &[BlockId],
