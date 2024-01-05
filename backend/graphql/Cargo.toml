@@ -17,10 +17,10 @@ chrono.workspace = true
 derive_more.workspace = true
 futures.workspace = true
 itertools.workspace = true
-tower-sessions.workspace = true
-tokio.workspace = true
-tokio-stream.workspace = true
+secrecy.workspace = true
+serde.workspace = true
 sqlx = { workspace = true, features = ["postgres"] }
 sqlx-macros.workspace = true
-serde.workspace = true
-secrecy.workspace = true
+tokio-stream.workspace = true
+tokio.workspace = true
+tower-sessions.workspace = true
