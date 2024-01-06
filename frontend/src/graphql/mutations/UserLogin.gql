@@ -1,0 +1,5 @@
+mutation UserLogin($handleName: String!, $password: String!) {
+  userLogin(handleName: $handleName, password: $password) {
+    id
+  }
+}

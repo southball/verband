@@ -1,0 +1,7 @@
+query UserMe {
+  userMe {
+    id
+    handleName
+    displayName
+  }
+}

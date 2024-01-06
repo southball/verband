@@ -1,0 +1,11 @@
+mutation UserRegister(
+  $handleName: String!
+  $displayName: String!
+  $password: String!
+) {
+  userRegister(
+    handleName: $handleName
+    displayName: $displayName
+    password: $password
+  )
+}
