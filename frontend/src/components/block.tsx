@@ -349,12 +349,12 @@ export const Block: React.FC<BlockProps> = ({
                 <TooltipProvider>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon-sm">
+                      <Button variant="outline" size="icon-sm" className="opacity-50 cursor-default">
                         <ScrollTextIcon className="h-3 w-3" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>History</p>
+                      <p>History (to be implemented)</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
