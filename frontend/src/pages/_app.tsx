@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import "../globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserContextProvider } from "@/contexts/user-context";
+import { DefaultLayout } from "@/layouts/default";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -12,7 +13,9 @@ export default function App({ Component, pageProps }: AppProps) {
       disableTransitionOnChange
     >
       <UserContextProvider>
-        <Component {...pageProps} />
+        <DefaultLayout>
+          <Component {...pageProps} />
+        </DefaultLayout>
       </UserContextProvider>
     </ThemeProvider>
   );

@@ -18,5 +18,5 @@ export default function Logout() {
     })();
   }, []);
 
-  return <DefaultLayout />;
+  return <></>;
 }

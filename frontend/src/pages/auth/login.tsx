@@ -57,47 +57,45 @@ export default function Login() {
   };
 
   return (
-    <DefaultLayout>
-      <div className="max-w-[800px] mx-auto px-4 pt-4 space-y-6">
-        <h3 className="text-lg font-medium">Login</h3>
-        <Separator />
-        {errorMessage !== null && (
-          <Alert variant="destructive">{errorMessage}</Alert>
-        )}
-        <Form {...form}>
-          <form className="space-y-4" onSubmit={form.handleSubmit(onLogin)}>
-            <FormField
-              name="handleName"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Handle Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="southball" {...field} />
-                  </FormControl>
-                  <FormDescription />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                  <FormDescription />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Login</Button>
-          </form>
-        </Form>
-      </div>
-    </DefaultLayout>
+    <div className="max-w-[800px] mx-auto px-4 pt-4 space-y-6">
+      <h3 className="text-lg font-medium">Login</h3>
+      <Separator />
+      {errorMessage !== null && (
+        <Alert variant="destructive">{errorMessage}</Alert>
+      )}
+      <Form {...form}>
+        <form className="space-y-4" onSubmit={form.handleSubmit(onLogin)}>
+          <FormField
+            name="handleName"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Handle Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="southball" {...field} />
+                </FormControl>
+                <FormDescription />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="password"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="********" {...field} />
+                </FormControl>
+                <FormDescription />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Login</Button>
+        </form>
+      </Form>
+    </div>
   );
 }

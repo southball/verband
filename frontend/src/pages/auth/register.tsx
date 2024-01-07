@@ -56,67 +56,65 @@ export default function Register() {
   };
 
   return (
-    <DefaultLayout>
-      <div className="max-w-[800px] mx-auto px-4 pt-4 space-y-6">
-        <h3 className="text-lg font-medium mb-6">Register</h3>
-        <Separator />
-        {errorMessage !== null && (
-          <Alert variant="destructive">{errorMessage}</Alert>
-        )}
-        <Form {...form}>
-          <form className="space-y-8" onSubmit={form.handleSubmit(onRegister)}>
-            <FormField
-              name="handleName"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Handle Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="southball" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is the handle name used for login.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="displayName"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Display Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Southball" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is the display name shown to other users.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    This is required for logging in.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Register</Button>
-          </form>
-        </Form>
-      </div>
-    </DefaultLayout>
+    <div className="max-w-[800px] mx-auto px-4 pt-4 space-y-6">
+      <h3 className="text-lg font-medium mb-6">Register</h3>
+      <Separator />
+      {errorMessage !== null && (
+        <Alert variant="destructive">{errorMessage}</Alert>
+      )}
+      <Form {...form}>
+        <form className="space-y-8" onSubmit={form.handleSubmit(onRegister)}>
+          <FormField
+            name="handleName"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Handle Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="southball" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the handle name used for login.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="displayName"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Display Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Southball" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is the display name shown to other users.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="password"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="********" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is required for logging in.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Register</Button>
+        </form>
+      </Form>
+    </div>
   );
 }
