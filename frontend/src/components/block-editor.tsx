@@ -16,30 +16,38 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import MonacoEditor, { useMonaco } from "@monaco-editor/react";
 import DOMPurify from "dompurify";
-import { debounce } from "lodash";
-import { CrossIcon, SendIcon, XIcon } from "lucide-react";
+import { debounce, initial } from "lodash";
+import { SendIcon, XIcon } from "lucide-react";
 import { marked } from "marked";
 import { useTheme } from "next-themes";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { BlockData } from "./block";
+import { md2html } from "@/lib/markdown";
 
 type BlockEditorProps = {
   cancellable?: boolean;
+  initialValue?: BlockData;
   onCancel?: () => void;
   onSubmit?: () => void;
 };
 
 export const BlockEditor = ({
   cancellable,
+  initialValue,
   onCancel,
   onSubmit,
 }: BlockEditorProps) => {
   const theme = useTheme();
   const monaco = useMonaco();
   const languages = monaco?.languages.getLanguages();
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState(
+    initialValue?.contentType === "code" ? initialValue.metadata.language : "",
+  );
 
-  const [markdown, setMarkdown] = useState("");
+  const [markdown, setMarkdown] = useState(
+    initialValue?.contentType === "markdown" ? initialValue.content : "",
+  );
   const [markdownHtml, setMarkdownHtml] = useState("");
 
   const debouncedSetMarkdown = useCallback(debounce(setMarkdown, 200), [
@@ -48,7 +56,11 @@ export const BlockEditor = ({
 
   useEffect(() => {
     void (async () => {
-      setMarkdownHtml(DOMPurify(window).sanitize(await marked.parse(markdown)));
+      try {
+        setMarkdownHtml(await md2html(markdown));
+      } catch (err) {
+        setMarkdownHtml(DOMPurify(window).sanitize(err?.toString() ?? ""));
+      }
     })();
   }, [markdown]);
 
@@ -57,7 +69,7 @@ export const BlockEditor = ({
 
   return (
     <>
-      <Tabs defaultValue="markdown">
+      <Tabs defaultValue={initialValue?.contentType ?? "markdown"}>
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="markdown">Markdown</TabsTrigger>
           <TabsTrigger value="code">Code</TabsTrigger>
@@ -72,12 +84,17 @@ export const BlockEditor = ({
                   language="markdown"
                   theme={theme.resolvedTheme === "dark" ? "vs-dark" : "vs"}
                   onChange={(value) => debouncedSetMarkdown(value ?? "")}
+                  defaultValue={
+                    initialValue?.contentType === "markdown"
+                      ? initialValue.content
+                      : ""
+                  }
                 />
               </ResizablePanel>
               <ResizableHandle withHandle />
               <ResizablePanel className="!overflow-auto">
                 <div
-                  className="px-4 py-2"
+                  className="px-4 py-2 markdown-content"
                   dangerouslySetInnerHTML={{
                     __html: markdownHtml,
                   }}
@@ -88,7 +105,10 @@ export const BlockEditor = ({
         </TabsContent>
         <TabsContent value="code">
           <div className="space-y-2">
-            <Select onValueChange={(value) => setLanguage(value)}>
+            <Select
+              onValueChange={(value) => setLanguage(value)}
+              value={language}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
@@ -104,6 +124,9 @@ export const BlockEditor = ({
               language={language}
               height="50vh"
               theme={theme.resolvedTheme === "dark" ? "vs-dark" : "vs"}
+              defaultValue={
+                initialValue?.contentType === "code" ? initialValue.content : ""
+              }
             />
           </div>
         </TabsContent>

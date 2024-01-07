@@ -3,21 +3,35 @@ import { BlockEditor } from "@/components/block-editor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { useMonaco } from "@monaco-editor/react";
-import DOMPurify from "dompurify";
-import { debounce } from "lodash";
 import { PlusIcon, PlusSquareIcon } from "lucide-react";
-import { marked } from "marked";
-import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useRef } from "react";
+import { useForm } from "react-hook-form";
 import { useIntersection } from "react-use";
 
 export default function Home() {
@@ -31,6 +45,8 @@ export default function Home() {
     });
   };
 
+  const form = useForm();
+
   return (
     <ResizablePanelGroup direction="horizontal">
       <ResizablePanel
@@ -40,10 +56,49 @@ export default function Home() {
         maxSize={50}
       >
         <div className="flex flex-col">
-          <div className="leading-4 text-ellipsis font-bold overflow-hidden whitespace-nowrap shrink-0 px-4 py-2 cursor-pointer text-muted-foreground hover:text-foreground">
-            <PlusSquareIcon size="1rem" className="inline h-4" />
-            &nbsp;Add new post
-          </div>
+          <Drawer>
+            <DrawerTrigger>
+              <div className="leading-4 text-ellipsis font-bold overflow-hidden whitespace-nowrap shrink-0 px-4 py-2 cursor-pointer text-muted-foreground hover:text-foreground">
+                <PlusSquareIcon size="1rem" className="inline h-4" />
+                &nbsp;Add new post
+              </div>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-sm flex flex-col">
+                <DrawerHeader>
+                  <DrawerTitle>Create Post</DrawerTitle>
+                </DrawerHeader>
+                <div className="px-4 py-2">
+                  <Form {...form}>
+                    <form className="space-y-4">
+                      <FormField
+                        name="title"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Title</FormLabel>
+                            <FormControl>
+                              <Input placeholder="BabyWAF" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                              Title of the post.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </form>
+                  </Form>
+                </div>
+                <DrawerFooter>
+                  <Button>Create</Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </div>
+            </DrawerContent>
+          </Drawer>
           <Separator />
           <div className="grow shrink basis-0">
             {new Array(100).fill(null).map((_, i) => (
@@ -73,7 +128,7 @@ export default function Home() {
           </div>
         </div>
       </ResizablePanel>
-      <ResizableHandle />
+      <ResizableHandle withHandle />
       <ResizablePanel className="!overflow-auto">
         {router.query.postId === undefined && (
           <div className="h-[100%] flex justify-center items-center text-muted-foreground text-xl">

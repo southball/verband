@@ -1,20 +1,11 @@
 import { Block } from "@/components/block";
 import { Badge } from "@/components/ui/badge";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DefaultLayout } from "@/layouts/default";
-import { cn } from "@/lib/utils";
-import { PlusSquareIcon } from "lucide-react";
-import { editor as monacoEditor } from "monaco-editor";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
