@@ -68,7 +68,11 @@ export default function Home() {
               >
                 <a className="block">
                   <div className="text-muted-foreground hover:text-foreground">
-                    <Block postTitle={`Post ${i + 1}`} blockId={i + 1} />
+                    <Block
+                      postId={i + 1}
+                      postTitle={`Post ${i + 1}`}
+                      blockId={i + 1}
+                    />
                   </div>
                 </a>
               </Link>
