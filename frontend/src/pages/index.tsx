@@ -1,27 +1,8 @@
 import { Block } from "@/components/block";
 import { BlockEditor } from "@/components/block-editor";
-import MultipleSelector from "@/components/ui-expansions/multiple-selector";
+import { PostCreator } from "@/components/post-creator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -46,8 +27,6 @@ export default function Home() {
     });
   };
 
-  const form = useForm();
-
   return (
     <ResizablePanelGroup direction="horizontal">
       <ResizablePanel
@@ -57,68 +36,12 @@ export default function Home() {
         maxSize={50}
       >
         <div className="flex flex-col">
-          <Drawer>
-            <DrawerTrigger>
-              <div className="leading-4 text-ellipsis font-bold overflow-hidden whitespace-nowrap shrink-0 px-4 py-2 cursor-pointer text-muted-foreground hover:text-foreground">
-                <PlusSquareIcon size="1rem" className="inline h-4" />
-                &nbsp;Add new post
-              </div>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full max-w-lg flex flex-col">
-                <DrawerHeader>
-                  <DrawerTitle>Create Post</DrawerTitle>
-                </DrawerHeader>
-                <div className="px-4 py-2">
-                  <Form {...form}>
-                    <form className="space-y-4">
-                      <FormField
-                        name="title"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                              <Input placeholder="BabyWAF" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                              Title of the post.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        name="tags"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Tags</FormLabel>
-                            <FormControl>
-                              <MultipleSelector
-                                options={[{ label: "SECCON", value: "SECCON" }]}
-                                placeholder="Select tags..."
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              Tags for the post.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </form>
-                  </Form>
-                </div>
-                <DrawerFooter>
-                  <Button>Create</Button>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </div>
-            </DrawerContent>
-          </Drawer>
+          <PostCreator>
+            <div className="leading-4 text-ellipsis font-bold overflow-hidden whitespace-nowrap shrink-0 px-4 py-2 cursor-pointer text-muted-foreground hover:text-foreground">
+              <PlusSquareIcon size="1rem" className="inline h-4" />
+              &nbsp;Add new post
+            </div>
+          </PostCreator>
           <Separator />
           <div className="grow shrink basis-0">
             {new Array(100).fill(null).map((_, i) => (
@@ -128,7 +51,7 @@ export default function Home() {
                     "px-4 py-2 space-y-1 cursor-pointer text-muted-foreground hover:text-foreground",
                     {
                       "text-foreground": router.query.postId === i.toString(),
-                    }
+                    },
                   )}
                   onClick={() => {
                     router.query.postId = i.toString();
