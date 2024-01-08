@@ -115,7 +115,9 @@ export const BlockEditor = ({
               <SelectContent>
                 <SelectGroup>
                   {languages?.map((language) => (
-                    <SelectItem value={language.id}>{language.id}</SelectItem>
+                    <SelectItem key={language.id} value={language.id}>
+                      {language.id}
+                    </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>

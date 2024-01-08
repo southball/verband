@@ -6,6 +6,7 @@ import "../prism-vsc-dark-plus.scss";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserContextProvider } from "@/contexts/user-context";
 import { DefaultLayout } from "@/layouts/default";
+import { DataContextProvider } from "@/contexts/data-context";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -16,9 +17,11 @@ export default function App({ Component, pageProps }: AppProps) {
       disableTransitionOnChange
     >
       <UserContextProvider>
-        <DefaultLayout>
-          <Component {...pageProps} />
-        </DefaultLayout>
+        <DataContextProvider>
+          <DefaultLayout>
+            <Component {...pageProps} />
+          </DefaultLayout>
+        </DataContextProvider>
       </UserContextProvider>
     </ThemeProvider>
   );

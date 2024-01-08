@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { PlusIcon, PlusSquareIcon } from "lucide-react";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useIntersection } from "react-use";
 
@@ -45,7 +45,7 @@ export default function Home() {
           <Separator />
           <div className="grow shrink basis-0">
             {new Array(100).fill(null).map((_, i) => (
-              <>
+              <React.Fragment key={i}>
                 <div
                   className={cn(
                     "px-4 py-2 space-y-1 cursor-pointer text-muted-foreground hover:text-foreground",
@@ -66,7 +66,7 @@ export default function Home() {
                   </div>
                 </div>
                 <Separator />
-              </>
+              </React.Fragment>
             ))}
           </div>
         </div>
@@ -96,6 +96,7 @@ export default function Home() {
                 <div className="space-y-2">
                   {new Array(100).fill(null).map((_, i) => (
                     <Block
+                      key={i}
                       showActions
                       postId={+(router.query.postId ?? "0")}
                       blockId={i + 1}
