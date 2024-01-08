@@ -125,7 +125,9 @@ export const Block: React.FC<BlockProps> = ({
               <div className="text-xs font-bold">{postTitle}</div>
               <div className="leading-[0]">
                 <Badge variant="inherit" className="px-2 py-0">
-                  <span className="text-[0.5rem]">SECCON CTF</span>
+                  <span className="text-[0.5rem]">
+                    CTF: ASIS CTF 2023 Final
+                  </span>
                 </Badge>
               </div>
             </div>

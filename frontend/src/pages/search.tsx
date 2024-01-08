@@ -40,7 +40,9 @@ export default function Home() {
                     <div className="text-md leading-none">Post {i + 1}</div>
                     <div className="leading-[0]">
                       <Badge variant="inherit" className="px-2 py-0">
-                        <span className="text-[0.5rem]">SECCON CTF</span>
+                        <span className="text-[0.5rem]">
+                          CTF: ASIS CTF 2023 Final
+                        </span>
                       </Badge>
                     </div>
                   </div>

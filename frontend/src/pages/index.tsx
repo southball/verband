@@ -61,7 +61,7 @@ export default function Home() {
                   <div className="text-md leading-none">Post {i + 1}</div>
                   <div>
                     <Badge variant="inherit">
-                      <span className="text-xs">SECCON CTF</span>
+                      <span className="text-xs">CTF: ASIS CTF 2023 Final</span>
                     </Badge>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export default function Home() {
                 </h1>
                 <div>
                   <Badge variant="inherit">
-                    <span className="text-xs">SECCON CTF</span>
+                    <span className="text-xs">CTF: ASIS CTF 2023 Final</span>
                   </Badge>
                 </div>
               </div>
