@@ -50,9 +50,13 @@ impl Block {
     }
 
     pub async fn create(conn: &mut PgConnection, post_id: PostId) -> async_graphql::Result<Block> {
-        Ok(sqlx::query_as!(Block, r#"INSERT INTO blocks (post_id) VALUES ($1) RETURNING id, post_id, latest_block_version_id AS "latest_block_version_id: BlockVersionId", created_at, updated_at"#, post_id as PostId)
-            .fetch_one(&mut *conn)
-            .await?)
+        let block = sqlx::query_as!(Block, r#"INSERT INTO blocks (post_id) VALUES ($1) RETURNING id, post_id, latest_block_version_id AS "latest_block_version_id: BlockVersionId", created_at, updated_at"#, post_id as PostId)
+.fetch_one(&mut *conn)
+            .await?;
+        sqlx::query!("UPDATE posts SET block_order = block_order || $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2", block.id as BlockId, post_id as PostId)
+        .execute(&mut *conn)
+        .await?;
+        Ok(block)
     }
 
     pub async fn update(
@@ -60,9 +64,16 @@ impl Block {
         id: BlockId,
         latest_block_version_id: BlockVersionId,
     ) -> async_graphql::Result<Block> {
-        Ok(sqlx::query_as!(Block, r#"UPDATE blocks SET latest_block_version_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, post_id, latest_block_version_id AS "latest_block_version_id: BlockVersionId", created_at, updated_at"#, latest_block_version_id as BlockVersionId, id as BlockId)
+        let block = sqlx::query_as!(Block, r#"UPDATE blocks SET latest_block_version_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, post_id, latest_block_version_id AS "latest_block_version_id: BlockVersionId", created_at, updated_at"#, latest_block_version_id as BlockVersionId, id as BlockId)
             .fetch_one(&mut *conn)
-            .await?)
+            .await?;
+        sqlx::query!(
+            "UPDATE posts SET updated_at = CURRENT_TIMESTAMP WHERE id = $1",
+            block.post_id as PostId
+        )
+        .execute(&mut *conn)
+        .await?;
+        Ok(block)
     }
 }
 

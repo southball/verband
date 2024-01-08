@@ -74,6 +74,7 @@ impl PostMutation {
             &PostUpdateData {
                 title: input.title,
                 tag_ids: input.tag_ids,
+                block_order: input.block_order,
             },
         )
         .await?;

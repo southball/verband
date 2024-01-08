@@ -18,6 +18,7 @@ pub struct BlockVersion {
     creator_id: UserId,
     content_type: String,
     pub(crate) content: String,
+    pub(crate) metadata: String,
     created_at: DateTime<Utc>,
 }
 
@@ -25,6 +26,7 @@ pub struct BlockVersion {
 pub struct BlockVersionCreateInput {
     pub(crate) content_type: String,
     pub(crate) content: String,
+    pub(crate) metadata: String,
 }
 
 pub struct BlockVersionCreateData {
@@ -33,6 +35,7 @@ pub struct BlockVersionCreateData {
     pub(crate) creator_id: UserId,
     pub(crate) content_type: String,
     pub(crate) content: String,
+    pub(crate) metadata: String,
 }
 
 impl BlockVersion {
@@ -43,7 +46,7 @@ impl BlockVersion {
         Ok(
             sqlx::query_as!(
                 BlockVersion,
-                r#"SELECT id, block_id, parent_block_version_id AS "parent_block_version_id: BlockVersionId", creator_id, content_type, content, created_at FROM block_versions WHERE id = ANY($1)"#,
+                r#"SELECT id, block_id, parent_block_version_id AS "parent_block_version_id: BlockVersionId", creator_id, content_type, content, metadata, created_at FROM block_versions WHERE id = ANY($1)"#,
                 ids as &[BlockVersionId])
             .fetch_all(&mut *conn)
             .await?,
@@ -57,7 +60,7 @@ impl BlockVersion {
         Ok(
             sqlx::query_as!(
                 BlockVersion,
-                r#"SELECT id, block_id, parent_block_version_id AS "parent_block_version_id: BlockVersionId", creator_id, content_type, content, created_at FROM block_versions WHERE block_id = ANY($1)"#,
+                r#"SELECT id, block_id, parent_block_version_id AS "parent_block_version_id: BlockVersionId", creator_id, content_type, content, metadata, created_at FROM block_versions WHERE block_id = ANY($1)"#,
                 block_ids as &[BlockId])
             .fetch_all(&mut *conn)
             .await?,
@@ -71,12 +74,15 @@ impl BlockVersion {
         Ok(
             sqlx::query_as!(
                 BlockVersion,
-                r#"INSERT INTO block_versions (block_id, parent_block_version_id, creator_id, content_type, content) VALUES ($1, $2, $3, $4, $5) RETURNING id, block_id, parent_block_version_id AS "parent_block_version_id: BlockVersionId", creator_id, content_type, content, created_at"#,
+                r#"INSERT INTO block_versions (block_id, parent_block_version_id, creator_id, content_type, content, metadata)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING id, block_id, parent_block_version_id AS "parent_block_version_id: BlockVersionId", creator_id, content_type, content, metadata, created_at"#,
                 data.block_id as BlockId,
                 data.parent_block_version_id as Option<BlockVersionId>,
                 data.creator_id as UserId,
                 data.content_type,
-                data.content)
+                data.content,
+                data.metadata)
             .fetch_one(&mut *conn)
             .await?,
         )

@@ -11,6 +11,7 @@ CREATE TABLE posts (
     id BIGSERIAL PRIMARY KEY,
     creator_id BIGINT NOT NULL REFERENCES users (id),
     title TEXT NOT NULL,
+    block_order BIGINT[] NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -30,6 +31,7 @@ CREATE TABLE block_versions (
     creator_id BIGINT NOT NULL REFERENCES users (id),
     content_type TEXT NOT NULL,
     content TEXT NOT NULL,
+    metadata TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

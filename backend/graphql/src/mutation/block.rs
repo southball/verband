@@ -39,6 +39,7 @@ impl BlockMutation {
                 creator_id: UserId(user_id),
                 content_type: input.content_type,
                 content: input.content,
+                metadata: input.metadata,
             },
         )
         .await?;
@@ -87,6 +88,7 @@ impl BlockMutation {
                 creator_id: UserId(user_id),
                 content_type: input.content_type,
                 content: input.content,
+                metadata: input.metadata,
             },
         )
         .await?;

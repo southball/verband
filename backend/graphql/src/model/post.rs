@@ -19,6 +19,7 @@ pub struct Post {
     pub(crate) id: PostId,
     pub(crate) creator_id: UserId,
     title: String,
+    block_order: Vec<i64>,
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
 }
@@ -39,11 +40,13 @@ pub struct PostCreateData {
 pub struct PostUpdateInput {
     pub(crate) title: String,
     pub(crate) tag_ids: Vec<TagId>,
+    pub(crate) block_order: Vec<i64>,
 }
 
 pub struct PostUpdateData {
     pub(crate) title: String,
     pub(crate) tag_ids: Vec<TagId>,
+    pub(crate) block_order: Vec<i64>,
 }
 
 impl Post {
@@ -57,7 +60,7 @@ impl Post {
     pub async fn find_all(conn: &mut PgConnection) -> anyhow::Result<Vec<Post>> {
         Ok(sqlx::query_as!(
             Post,
-            "SELECT id, creator_id, title, created_at, updated_at FROM posts"
+            "SELECT id, creator_id, title, block_order, created_at, updated_at FROM posts"
         )
         .fetch_all(&mut *conn)
         .await?)
@@ -66,7 +69,7 @@ impl Post {
     pub async fn find_by_ids(conn: &mut PgConnection, ids: &[PostId]) -> anyhow::Result<Vec<Post>> {
         Ok(sqlx::query_as!(
             Post,
-            "SELECT id, creator_id, title, created_at, updated_at FROM posts WHERE id = ANY($1)",
+            "SELECT id, creator_id, title, block_order, created_at, updated_at FROM posts WHERE id = ANY($1)",
             ids as &[PostId]
         )
         .fetch_all(&mut *conn)
@@ -79,7 +82,7 @@ impl Post {
     ) -> anyhow::Result<Vec<Post>> {
         Ok(sqlx::query_as!(
             Post,
-            "SELECT id, creator_id, title, created_at, updated_at FROM posts WHERE creator_id = ANY($1)",
+            "SELECT id, creator_id, title, block_order, created_at, updated_at FROM posts WHERE creator_id = ANY($1)",
             creator_ids as &[UserId]
         )
         .fetch_all(&mut *conn)
@@ -130,8 +133,8 @@ impl Post {
     pub async fn create(conn: &mut PgConnection, data: &PostCreateData) -> anyhow::Result<Post> {
         let post = sqlx::query_as!(
             Post,
-            "INSERT INTO posts (title, creator_id) VALUES ($1, $2)
-            RETURNING id, creator_id, title, created_at, updated_at",
+            "INSERT INTO posts (title, creator_id, block_order) VALUES ($1, $2, '{}')
+            RETURNING id, creator_id, title, block_order, created_at, updated_at",
             data.title,
             data.creator_id.0
         )
@@ -156,9 +159,10 @@ impl Post {
     ) -> anyhow::Result<Post> {
         let post = sqlx::query_as!(
             Post,
-            "UPDATE posts SET title = $1 WHERE id = $2
-            RETURNING id, creator_id, title, created_at, updated_at",
+            "UPDATE posts SET title = $1, block_order = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3
+            RETURNING id, creator_id, title, block_order, created_at, updated_at",
             data.title,
+            &data.block_order,
             id as PostId
         )
         .fetch_one(&mut *conn)
